@@ -1,97 +1,202 @@
-# 🚀 Loan Approval Prediction System
+<div align="center">
 
-An end-to-end Machine Learning web-ready application designed to automate and streamline the credit risk assessment process using supervised binary classification (**Logistic Regression**).
+# 🏦 Loan Approval Prediction System
+
+**An end-to-end Machine Learning pipeline that predicts whether a loan application will be approved, using applicant details and Logistic Regression.**
+
+![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-F7931E?logo=scikitlearn&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?logo=pandas&logoColor=white)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?logo=jupyter&logoColor=white)
+![Accuracy](https://img.shields.io/badge/Accuracy-78.86%25-success)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
+
+</div>
 
 ---
 
 ## 📋 Table of Contents
-1. [About The Project](#-about-the-project)
-2. [Dataset Overview](#-dataset-overview)
-3. [Project Workflow & Architecture](#-project-workflow--architecture)
-4. [Exploratory Data Analysis (EDA) Insights](#-exploratory-data-analysis-eda-insights)
-5. [Model Performance & Evaluation](#-model-performance--evaluation)
-6. [Tech Stack](#-tech-stack)
-7. [Getting Started & Installation](#-getting-started--installation)
-8. [Usage & Predictions](#-usage--predictions)
+
+1. [About the Project](#-about-the-project)
+2. [Key Results](#-key-results)
+3. [Dataset Overview](#-dataset-overview)
+4. [Project Workflow](#-project-workflow)
+5. [EDA Insights](#-exploratory-data-analysis-eda-insights)
+6. [Model Performance](#-model-performance--evaluation)
+7. [Predicting New Applicants](#-predicting-new-applicants)
+8. [Tech Stack](#-tech-stack)
+9. [Project Structure](#-project-structure)
+10. [Getting Started](#-getting-started)
+11. [Limitations and Future Work](#-limitations-and-future-work)
+12. [Author](#-author)
 
 ---
 
-## 🎯 About The Project
-Traditional loan approval workflows in financial institutions are often manual, time-consuming, and susceptible to subjective bias. This project implements a machine learning pipeline that predicts whether an applicant’s loan request should be **Approved (Y)** or **Rejected (N)** based on their financial history, demographics, and loan parameters. 
+## 🎯 About the Project
 
----
+Banks and lenders receive thousands of loan applications, and reviewing each one manually is slow and can be inconsistent. This project builds a supervised **binary classification** model that predicts whether a loan application should be **Approved (Y)** or **Rejected (N)** from the applicant's profile, supporting faster and more data-driven credit decisions.
+
+The project covers the complete machine learning workflow: data loading, cleaning, preprocessing, exploratory analysis, model training, evaluation, and inference on new applicants.
+
+## 🏆 Key Results
+
+| Metric | Score |
+|---|---|
+| **Accuracy** | 78.86% |
+| **Precision** | 75.96% |
+| **Recall** | 98.75% |
+| **F1-Score** | 85.87% |
+| **ROC-AUC** | 74.04% |
+| Training Accuracy | 82.08% |
+
+> 💡 **Key insight:** `Credit_History` is the strongest factor influencing the loan decision (correlation of **0.54** with `Loan_Status`).
 
 ## 📊 Dataset Overview
-The model is trained on a standardized financial dataset containing historical loan application records. Key features include:
-* **Financial Attributes:** `ApplicantIncome`, `CoapplicantIncome`, `LoanAmount`, `Loan_Amount_Term`
-* **Credit History:** `Credit_History` (Binary indicator of whether guidelines were met)
-* **Demographics & Property:** `Gender`, `Married`, `Dependents`, `Education`, `Self_Employed`, `Property_Area`
-* **Target Variable:** `Loan_Status` (Y = Approved, N = Rejected)
 
----
+- **File:** `train_u6lujuX_CVtuZ9i.csv`
+- **Size:** 614 applications, 13 columns
+- **Target:** `Loan_Status` (`Y` = Approved, `N` = Rejected)
 
-## ⚙️ Project Workflow & Architecture
-1. **Data Preprocessing & Cleaning:** 
-   * Handled missing values using statistical imputation (Mode for categorical attributes, Median for continuous variables like `LoanAmount`).
-   * Dropped redundant unique identifiers (`Loan_ID`).
-   * Encoded categorical attributes into numerical values for ML compatibility and applied `pd.get_dummies` for multi-category features.
-2. **Exploratory Data Analysis (EDA):** Visualized distribution patterns, income skewness, and feature-to-target correlations using `Matplotlib` and `Seaborn`.
-3. **Data Splitting & Scaling:** Divided the dataset into an 80-20 train-test split and normalized feature scales using `StandardScaler` to optimize model convergence.
-4. **Model Training:** Implemented a robust **Logistic Regression** classifier.
-5. **Evaluation & Prediction Pipeline:** Tested against multiple unseen applicant profiles to output risk classes and confidence probabilities.
+| Feature | Description |
+|---|---|
+| `Loan_ID` | Unique ID (dropped before training) |
+| `Gender` | Male / Female |
+| `Married` | Marital status |
+| `Dependents` | Number of dependents (0, 1, 2, 3+) |
+| `Education` | Graduate / Not Graduate |
+| `Self_Employed` | Self-employment status |
+| `ApplicantIncome` | Applicant's income |
+| `CoapplicantIncome` | Co-applicant's income |
+| `LoanAmount` | Requested loan amount |
+| `Loan_Amount_Term` | Loan term in months |
+| `Credit_History` | Credit history meets guidelines (1) or not (0) |
+| `Property_Area` | Urban / Semiurban / Rural |
+| `Loan_Status` | Target variable |
 
----
+## 🔄 Project Workflow
 
-## 📈 Exploratory Data Analysis (EDA) Insights
-* **Credit History Impact:** Applicants with a clean credit history (`Credit_History = 1.0`) demonstrate a dramatically higher approval rate, making it the single most influential predictive feature.
-* **Income Distribution:** Both applicant and co-applicant incomes exhibit right-skewness, handled effectively during scaling.
-* **Property Area Trends:** Semi-urban locations show balanced distribution with favorable approval ratios compared to strictly rural or urban zones.
+```
+Raw Data → Cleaning → Encoding → EDA → Train/Test Split → Scaling → Logistic Regression → Evaluation → Predictions
+```
 
----
+1. **Data cleaning**
+   - Dropped the non-informative `Loan_ID` column.
+   - Filled missing categorical and discrete values (`Gender`, `Married`, `Dependents`, `Self_Employed`, `Loan_Amount_Term`, `Credit_History`) with the **mode**.
+   - Filled missing `LoanAmount` values with the **median**.
+2. **Encoding**
+   - Binary mapping for `Gender`, `Married`, `Education`, `Self_Employed` and `Loan_Status`.
+   - Converted `Dependents` (`3+` to `3`) to a numeric type.
+   - One-hot encoded `Property_Area` (`drop_first=True`), giving **12 model features**.
+3. **Exploratory Data Analysis** with Matplotlib and Seaborn.
+4. **Train/test split:** 80% / 20% (`random_state=42`).
+5. **Feature scaling** with `StandardScaler` (fit on training data only to avoid data leakage).
+6. **Model training:** Logistic Regression.
+7. **Evaluation** with a confusion matrix, classification report and ROC-AUC.
+8. **Inference function** that returns the prediction and a confidence score for new applicants.
 
-## 📊 Model Performance & Evaluation
-The trained Logistic Regression model achieved strong metrics on the test dataset:
-* **Accuracy:** ~80%+
-* **Evaluation Metrics Tracked:** Precision, Recall, F1-Score, Confusion Matrix, and ROC-AUC score confirming high classification reliability.
+## 🔍 Exploratory Data Analysis (EDA) Insights
 
----
+- **Credit History** is the dominant signal: applicants with a credit history of `1` are approved far more often than those with `0`.
+- **Applicant Income** is heavily right-skewed, with most applicants in the lower income range and a few high-income outliers.
+- **Correlation matrix:** `Credit_History` has the strongest correlation with `Loan_Status` (**0.54**), and `LoanAmount` correlates with `ApplicantIncome` (**0.57**).
+
+## 📈 Model Performance & Evaluation
+
+**Confusion Matrix** (test set, 123 samples)
+
+|  | Predicted Rejected | Predicted Approved |
+|---|:---:|:---:|
+| **Actual Rejected** | 18 | 25 |
+| **Actual Approved** | 1 | 79 |
+
+**Classification Report**
+
+| Class | Precision | Recall | F1-Score | Support |
+|---|:---:|:---:|:---:|:---:|
+| 0 (Rejected) | 0.95 | 0.42 | 0.58 | 43 |
+| 1 (Approved) | 0.76 | 0.99 | 0.86 | 80 |
+| **Accuracy** | | | **0.79** | 123 |
+
+**Interpretation:** the model is excellent at identifying approvable applicants (99% recall) but more lenient on rejections (42% recall for the rejected class), which is a result of the class imbalance in the data.
+
+## 🔮 Predicting New Applicants
+
+The notebook includes a reusable `predict_loan_status()` function that scales new inputs with the fitted scaler and returns the decision with a confidence probability.
+
+| Applicant | Prediction | Confidence |
+|---|---|---|
+| 1 | Approved (Y) | 90.16% |
+| 2 | Rejected (N) | 95.10% |
+| 3 | Approved (Y) | 81.08% |
 
 ## 🛠️ Tech Stack
-* **Language:** Python 3.x
-* **Libraries:** Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn
-* **Environment:** Jupyter Notebook / JupyterLab
-* **Version Control:** Git & GitHub
+
+- **Language:** Python 3
+- **Data processing:** Pandas, NumPy
+- **Visualization:** Matplotlib, Seaborn
+- **Machine learning:** Scikit-Learn (Logistic Regression, StandardScaler, metrics)
+- **Environment:** Jupyter Notebook
+
+## 📁 Project Structure
+
+```
+Loan-Approval-Prediction/
+├── Loan Prediction.ipynb        # Full analysis, model training and evaluation
+├── train_u6lujuX_CVtuZ9i.csv    # Dataset
+├── requirements.txt             # Python dependencies
+└── README.md                    # Project documentation
+```
+
+## 🚀 Getting Started
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/Minahil-CS/Loan-Approval-Prediction.git
+cd Loan-Approval-Prediction
+```
+
+**2. (Optional) Create a virtual environment**
+
+```bash
+python -m venv venv
+source venv/bin/activate        # On Windows: venv\Scripts\activate
+```
+
+**3. Install dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+**4. Launch the notebook**
+
+```bash
+jupyter notebook "Loan Prediction.ipynb"
+```
+
+Keep `train_u6lujuX_CVtuZ9i.csv` in the same folder as the notebook, then run all cells from top to bottom.
+
+## ⚠️ Limitations and Future Work
+
+- Class imbalance lowers recall on rejected applications; techniques like **SMOTE**, class weights or threshold tuning can help.
+- Compare with other models (**Random Forest, XGBoost, SVM**) and use cross-validation and hyperparameter tuning.
+- Add feature engineering (e.g. total income, EMI-to-income ratio).
+- Build and deploy an interactive **Streamlit** web app for live predictions.
+
+## 👩‍💻 Author
+
+**Minahil Fatima**
+BS Computer Science, University of Agriculture Faisalabad (UAF)
+
+[![GitHub](https://img.shields.io/badge/GitHub-Minahil--CS-181717?logo=github)](https://github.com/Minahil-CS)
+
+Built as part of the AI/ML Internship at **Big Brains**.
 
 ---
 
-## 🚀 Getting Started & Installation
+<div align="center">
 
-To run this project locally on your machine, follow these steps:
+⭐ If you found this project useful, consider giving it a star!
 
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/Minahil-CS/Loan-Approval-Prediction.git](https://github.com/Minahil-CS/Loan-Approval-Prediction.git)
-~~
-
-2.   Navigate to the project directory:
-```
-Bash
-cd Loan-Approval-Prediction
-Install required dependencies:
-```
-
-3. Install required dependencies:
-```
-Bash
-pip install pandas numpy scikit-learn matplotlib seaborn
-````
-4. Run the Jupyter Notebook:
-Open Loan Prediction.ipynb inside JupyterLab or VS Code and execute the cells sequentially.
-
-💡 Usage & Predictions
-The system includes a custom multi-instance inference wrapper. You can pass unformatted applicant arrays to output instant approval outcomes and confidence percentages:
-
-Python
-# Example sample input structure for real-time predictions
-test_applicants = [...] 
-# Outputs prediction class and confidence probability score
+</div>
